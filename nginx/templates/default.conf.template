@@ -1,0 +1,33 @@
+server {
+    server_name www.ngame.com;
+    listen      80 default_server;
+
+    server_tokens off;
+
+    index index.php index.html;
+    root ${WEB_DATA_PATH};
+    #root /data/web/hisiphp/public;
+
+    client_max_body_size 100m;
+    keepalive_timeout 300s;
+
+    location /ptgm/ {
+        index  index.php index.html index.htm;
+        #以下代码必须有
+        if (!-e $request_filename) {
+            rewrite  ^/ptgm/(.*)$  /ptgm/index.php?s=$1  last;
+            break;
+        }
+    }
+
+    location ~ \.php(.*)$ {
+        fastcgi_pass phpfpm:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $DOCUMENT_ROOT$fastcgi_script_name;
+        fastcgi_param  PATH_INFO $1;
+        fastcgi_read_timeout 300s;
+        fastcgi_send_timeout 300s;
+        include        fastcgi_params;
+    }
+}
+

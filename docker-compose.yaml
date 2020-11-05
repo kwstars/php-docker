@@ -1,0 +1,67 @@
+version: '3.0'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+#    user: ptadmin
+    ports:
+      - "80:80"
+    volumes:
+      - ${WEB_DATA_PATH}:${WEB_DATA_PATH}
+      - ./nginx/templates:/etc/nginx/templates
+    environment:
+      - WEB_DATA_PATH=${WEB_DATA_PATH}
+
+  phpfpm:
+    build:
+      context: ./dockerfiles/php/
+    image: phpfpm7
+    container_name: phpfpm
+    restart: always
+#    user: ptadmin
+    volumes:
+      - ${WEB_DATA_PATH}:${WEB_DATA_PATH}
+      - ./php/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - /data/mysql:/var/lib/mysql:rw
+    ports:
+      - "127.0.0.1:3306:3306" 
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      TZ: "Asia/Shanghai"
+      #MYSQL_DATABASE: wordpress
+      #MYSQL_USER: wordpress
+      #MYSQL_PASSWORD: wordpress
+    command: [
+      #'--query_cache_type=1',
+      #'--innodb-flush-log-at-trx-commit=0',
+      #'--slow-query-log',
+      #'--long-query-time=3',
+      #'--max_connections=2000',
+      #'--max_allowed_packet=256M',
+      #'--innodb_read_io_threads=16',
+      #'--innodb_write_io_threads=16',
+      #'--innodb_log_file_size=256M',
+      #'--innodb-buffer-pool-size=1G',
+      #'--innodb_lock_wait_timeout=30',
+      '--character-set-server=utf8mb4',
+      #'--max_prepared_stmt_count=1024000',
+      '--collation-server=utf8mb4_general_ci'
+      ]
+
+networks:
+  default:
+    name: mynetwork
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.255.0/24
+          gateway: 172.31.255.1
