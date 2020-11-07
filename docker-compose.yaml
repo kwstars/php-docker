@@ -5,10 +5,11 @@ services:
     image: nginx:alpine
     container_name: nginx
     restart: always
-#    user: ptadmin
+    #user: ${RUN_UID:-1000}:${RUN_GID:-1000}
     ports:
       - "80:80"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${WEB_DATA_PATH}:${WEB_DATA_PATH}
       - ./nginx/templates:/etc/nginx/templates
     environment:
@@ -20,8 +21,9 @@ services:
     image: phpfpm7
     container_name: phpfpm
     restart: always
-#    user: ptadmin
+    user: ${RUN_UID:-1000}:${RUN_GID:-1000}
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${WEB_DATA_PATH}:${WEB_DATA_PATH}
       - ./php/php.ini:/usr/local/etc/php/php.ini:ro
       - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
@@ -42,15 +44,15 @@ services:
       #MYSQL_PASSWORD: wordpress
     command: [
       #'--query_cache_type=1',
-      #'--innodb-flush-log-at-trx-commit=0',
+      '--innodb-flush-log-at-trx-commit=0',
       #'--slow-query-log',
       #'--long-query-time=3',
-      #'--max_connections=2000',
+      '--max_connections=2000',
       #'--max_allowed_packet=256M',
       #'--innodb_read_io_threads=16',
       #'--innodb_write_io_threads=16',
       #'--innodb_log_file_size=256M',
-      #'--innodb-buffer-pool-size=1G',
+      '--innodb-buffer-pool-size=1G',
       #'--innodb_lock_wait_timeout=30',
       '--character-set-server=utf8mb4',
       #'--max_prepared_stmt_count=1024000',
