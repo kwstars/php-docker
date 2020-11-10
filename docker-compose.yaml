@@ -43,19 +43,19 @@ services:
       #MYSQL_USER: wordpress
       #MYSQL_PASSWORD: wordpress
     command: [
-      #'--query_cache_type=1',
+      '--query_cache_type=1',
       '--innodb-flush-log-at-trx-commit=0',
-      #'--slow-query-log',
-      #'--long-query-time=3',
+      '--slow-query-log',
+      '--long-query-time=3',
       '--max_connections=2000',
-      #'--max_allowed_packet=256M',
-      #'--innodb_read_io_threads=16',
-      #'--innodb_write_io_threads=16',
-      #'--innodb_log_file_size=256M',
+      '--max_allowed_packet=256M',
+      '--innodb_read_io_threads=16',
+      '--innodb_write_io_threads=16',
+      '--innodb_log_file_size=256M',
       '--innodb-buffer-pool-size=1G',
-      #'--innodb_lock_wait_timeout=30',
+      '--innodb_lock_wait_timeout=30',
       '--character-set-server=utf8mb4',
-      #'--max_prepared_stmt_count=1024000',
+      '--max_prepared_stmt_count=1024000',
       '--collation-server=utf8mb4_general_ci'
       ]
 

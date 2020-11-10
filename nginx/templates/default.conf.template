@@ -1,33 +1,55 @@
 server {
-    server_name www.ngame.com;
-    listen      80 default_server;
+  server_name www.ngame.com;
+  listen 80 default_server;
 
-    server_tokens off;
+  server_tokens off;
 
-    index index.php index.html;
-    root ${WEB_DATA_PATH};
-    #root /data/web/hisiphp/public;
+  index index.php index.html;
+  root ${WEB_DATA_PATH};
+  #root /data/web/hisiphp/public;
 
-    client_max_body_size 100m;
-    keepalive_timeout 300s;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  #keepalive_timeout   65;
+  fastcgi_connect_timeout 300;
+  fastcgi_send_timeout 300;
+  fastcgi_read_timeout 600;
+  types_hash_max_size 2048;
+  client_max_body_size 100M;
+  keepalive_timeout 300s;
 
-    location /ptgm/ {
-        index  index.php index.html index.htm;
-        #以下代码必须有
-        if (!-e $request_filename) {
-            rewrite  ^/ptgm/(.*)$  /ptgm/index.php?s=$1  last;
-            break;
-        }
+  location /ptgm/ {
+    index index.php index.html index.htm;
+    #以下代码必须有
+    if (!-e $request_filename) {
+      rewrite ^/ptgm/(.*)$ /ptgm/index.php?s=$1 last;
+      break;
     }
+  }
 
-    location ~ \.php(.*)$ {
-        fastcgi_pass phpfpm:9000;
-        fastcgi_index  index.php;
-        fastcgi_param  SCRIPT_FILENAME  $DOCUMENT_ROOT$fastcgi_script_name;
-        fastcgi_param  PATH_INFO $1;
-        fastcgi_read_timeout 300s;
-        fastcgi_send_timeout 300s;
-        include        fastcgi_params;
-    }
+  location ~ \.php(.*)$ {
+    fastcgi_pass phpfpm:9000;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $DOCUMENT_ROOT$fastcgi_script_name;
+    fastcgi_param PATH_INFO $1;
+    #fastcgi_read_timeout 300s;
+    #fastcgi_send_timeout 300s;
+    include fastcgi_params;
+  }
+
+  location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|mp4|ico)$ {
+    expires 30d;
+    access_log off;
+  }
+
+  location ~ .*\.(js|css)?$ {
+    expires 7d;
+    access_log off;
+  }
+
+  location ~ /\.ht {
+    deny all;
+  }
 }
 
