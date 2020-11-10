@@ -43,10 +43,17 @@ services:
       #MYSQL_USER: wordpress
       #MYSQL_PASSWORD: wordpress
     command: [
-      '--query_cache_type=1',
-      '--innodb-flush-log-at-trx-commit=0',
+      '--query_cache_type=0',
+      '--sync_binlog=1',
+      '--innodb-flush-log-at-trx-commit=1',
+      '--innodb_file_per_table=on',
       '--slow-query-log',
       '--long-query-time=3',
+      '--server_id=1',
+      '--log_bin=on',
+      '--sync_binlog=1',
+      '--expire_logs_days=3',
+      '--max_binlog_size=1G',
       '--max_connections=2000',
       '--max_allowed_packet=256M',
       '--innodb_read_io_threads=16',
