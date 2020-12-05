@@ -17,7 +17,8 @@ RUN pecl install https://pecl.php.net/get/xdebug-2.9.6.tgz \
 RUN curl -sS https://install.phpcomposer.com/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
     && composer global require "spatie/async" \
-    && composer global require "xobotyi/rsync"
+    && composer global require "xobotyi/rsync" \
+    && composer global require "monolog/monolog"
 
 # 移除基础库 && 清理不用缓存
 RUN apk del --no-cache libmcrypt-dev freetype-dev libpng-dev libjpeg-turbo-dev \
